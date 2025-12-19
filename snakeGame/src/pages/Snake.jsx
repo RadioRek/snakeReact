@@ -29,9 +29,16 @@ export default function Snake() {
 
 	// vector de direccion
 	const dir = useRef({ x: 1, y: 0 });
+	const dirChanged = useRef(false);
+
 
 	useEffect(() => {
+
 		const handleKeyDown = (e) => {
+			if (dirChanged.current) {
+				return;
+			};
+
 			if (e.key === "w" && dir.current.y !== 1) {
 				dir.current = { x: 0, y: -1 };
 			} else if (e.key === "s" && dir.current.y !== -1) {
@@ -41,7 +48,8 @@ export default function Snake() {
 			} else if (e.key === "d" && dir.current.x !== -1) {
 				dir.current = { x: 1, y: 0 };
 			}
-			console.log(dir.current);
+
+			dirChanged.current = true;
 		};
 
 		document.addEventListener("keydown", handleKeyDown);
@@ -50,7 +58,6 @@ export default function Snake() {
 
 	// posicion de la comida
 	const food = useRef({ x: 10, y: 7 });
-
 
 	function initDraw() {
 		snake.current.forEach(() => {
@@ -77,6 +84,10 @@ export default function Snake() {
 		foodElement.current.className = 'comida';
 		boardRef.current.appendChild(foodElement.current);
 	}
+
+
+	const prev = useRef(null);
+	const next = useRef(null);
 
 	function draw() {
 		// mover comida
@@ -259,9 +270,6 @@ export default function Snake() {
 		});
 	}
 
-	const prev = useRef(null);
-	const next = useRef(null);
-
 	function update() {
 		const head = {
 			x: snake.current[0].x + dir.current.x,
@@ -297,8 +305,9 @@ export default function Snake() {
 		}
 
 		draw();
-	}
+		dirChanged.current = false;
 
+	}
 
 	function resetGame() {
 		// reiniciar snake, dirección y comida
@@ -328,7 +337,7 @@ export default function Snake() {
 		draw();
 
 		// reiniciar loop del juego
-		gameLoop.current = setInterval(update, 100);
+		gameLoop.current = setInterval(update, 150);
 
 		// ocultar pantalla de pérdida
 		setShowLoosingScreen(false);
@@ -336,7 +345,6 @@ export default function Snake() {
 
 	const [showLoosingScreen, setShowLoosingScreen] = useState(true);
 	const [loosed, setLoosed] = useState(false);
-
 	let loosingScreen = null;
 
 	if (showLoosingScreen) {
@@ -349,12 +357,12 @@ export default function Snake() {
 						</h4>
 
 						<p className="parrafo">
-							<span className="txt-es">Tu puntaje final es {snake.current.length}</span>
+							<span>Tu puntaje final es {snake.current.length}</span>
 						</p>
 
-						<div className="btnSnakeContainer">
+						<div>
 							<button className="botonReset" onClick={hideLoosing}>
-								<span className="txt-es">Intentar denuevo!</span>
+								<span>Intentar denuevo!</span>
 							</button>
 						</div>
 					</div>
@@ -366,14 +374,14 @@ export default function Snake() {
 				<div className="loosingScreen">
 					<div className="loosingCard">
 						<h4 className="headSnake">
-							<span className="txt-es">Quédate a jugar un ratillo</span>
+							<span>Quédate a jugar un ratillo</span>
 						</h4>
 
 						<p className="parrafo"></p>
 
-						<div className="btnSnakeContainer">
+						<div>
 							<button className="botonReset" onClick={hideLoosing}>
-								<span className="txt-es">¡Jugar!</span>
+								<span>¡Jugar!</span>
 							</button>
 						</div>
 					</div>
@@ -395,9 +403,6 @@ export default function Snake() {
 		setShowLoosingScreen(true);
 		setLoosed(true);
 	}
-
-
-
 
 	return (
 		<div className="snakePage">

@@ -1,6 +1,5 @@
 import { Link } from "react-router-dom";
 import "./Index.css";
-
 export default function Index() {
     return (
         <>
